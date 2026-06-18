@@ -4,6 +4,7 @@ import com.beastwall.backend.contact.v1.domain.model.entity.Contact;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +24,7 @@ public class ContactDTO {
     @NotBlank(message = "lastname is required")
     private String lastname;
 
-    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Wrong phone format")
+    @Size(min = 10, max = 14, message = "Wrong phone format, it has to contain between 10 and 14 digits")
     private String phone;
 
     @Email(message = "not valid email address xxx@yyy.domain")
@@ -47,5 +48,16 @@ public class ContactDTO {
                 .phone(this.phone)
                 .email(this.email)
                 .build();
+    }
+
+    @Override
+    public String toString() {
+        return "ContactDTO{" +
+                "id=" + id +
+                ", firstname='" + firstname + '\'' +
+                ", lastname='" + lastname + '\'' +
+                ", phone='" + phone + '\'' +
+                ", email='" + email + '\'' +
+                '}';
     }
 }

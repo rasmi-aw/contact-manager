@@ -40,6 +40,7 @@ public class ContactController {
     @PutMapping
     public ResponseEntity<ContactDTO> saveContact(@Valid @RequestBody ContactDTO contactDTO) {
         Optional<Contact> response = contactUseCase.saveContact(contactDTO.toDomain());
+        System.out.println();
         return response.map(contact -> ResponseEntity.ok(ContactDTO.fromDomain(contact))).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
