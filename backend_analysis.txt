@@ -1,0 +1,449 @@
+================ PROJECT STRUCTURE ================
+./backend
+./backend/.idea
+./backend/.mvn
+./backend/.mvn/wrapper
+./backend/src
+./backend/src/main
+./backend/src/main/java
+./backend/src/main/java/com
+./backend/src/main/java/com/beastwall
+./backend/src/main/java/com/beastwall/backend
+./backend/src/main/java/com/beastwall/backend/contact
+./backend/src/main/java/com/beastwall/backend/contact/v1
+./backend/src/main/java/com/beastwall/backend/contact/v1/application
+./backend/src/main/java/com/beastwall/backend/contact/v1/application/port
+./backend/src/main/java/com/beastwall/backend/contact/v1/application/port/in
+./backend/src/main/java/com/beastwall/backend/contact/v1/application/port/out
+./backend/src/main/java/com/beastwall/backend/contact/v1/application/service
+./backend/src/main/java/com/beastwall/backend/contact/v1/domain
+./backend/src/main/java/com/beastwall/backend/contact/v1/domain/model
+./backend/src/main/java/com/beastwall/backend/contact/v1/infra
+./backend/src/main/java/com/beastwall/backend/contact/v1/infra/adapter
+./backend/src/main/java/com/beastwall/backend/contact/v1/infra/adapter/controller
+./backend/src/main/java/com/beastwall/backend/contact/v1/infra/adapter/controller/dto
+./backend/src/main/java/com/beastwall/backend/contact/v1/infra/config
+./backend/src/main/java/com/beastwall/backend/contact/v1/infra/persistence
+./backend/src/main/java/com/beastwall/backend/contact/v1/infra/persistence/entity
+./backend/src/main/java/com/beastwall/backend/contact/v1/infra/persistence/mapper
+./backend/src/main/java/com/beastwall/backend/contact/v1/infra/persistence/repository
+./backend/src/main/resources
+./backend/src/main/resources/static
+./backend/src/main/resources/templates
+./backend/src/test
+./backend/src/test/java
+./backend/src/test/java/com
+./backend/src/test/java/com/beastwall
+./backend/src/test/java/com/beastwall/backend
+./backend/target
+
+
+================ JAVA FILES ================
+
+
+
+==================================================
+FILE: ./backend/src/main/java/com/beastwall/backend/BackendApplication.java
+==================================================
+package com.beastwall.backend;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class BackendApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(BackendApplication.class, args);
+    }
+
+}
+
+
+==================================================
+FILE: ./backend/src/main/java/com/beastwall/backend/contact/v1/application/port/in/ContactUseCase.java
+==================================================
+package com.beastwall.backend.contact.v1.application.port.in;
+
+import com.beastwall.backend.contact.v1.domain.model.Contact;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface ContactUseCase {
+    List<Contact> getContacts(long fromId, int limit);
+    Optional<Contact> getContactById(long id);
+    Contact saveContact(Contact contact);
+    void deleteContactById(long id);
+}
+
+==================================================
+FILE: ./backend/src/main/java/com/beastwall/backend/contact/v1/application/port/out/ContactRepositoryPort.java
+==================================================
+package com.beastwall.backend.contact.v1.application.port.out;
+
+import com.beastwall.backend.contact.v1.domain.model.Contact;
+
+import java.util.List;
+import java.util.Optional;
+
+public interface ContactRepositoryPort {
+
+    /**
+     * returns A limited list of contacts starting from a given @NonNull Id
+     *
+     * @param fromId: starting Id included
+     * @param limit:  number of contacts to return
+     */
+    List<Contact> getContacts(long fromId, int limit);
+
+    Optional<Contact> getContactById(long id);
+
+    Optional<Contact> saveContact(Contact contact);
+
+    void deleteContactById(long id);
+}
+
+
+==================================================
+FILE: ./backend/src/main/java/com/beastwall/backend/contact/v1/application/service/ContactService.java
+==================================================
+package com.beastwall.backend.contact.v1.application.service;
+
+import com.beastwall.backend.contact.v1.application.port.in.ContactUseCase;
+import com.beastwall.backend.contact.v1.application.port.out.ContactRepositoryPort;
+import com.beastwall.backend.contact.v1.domain.model.Contact;
+import lombok.AllArgsConstructor;
+
+import java.util.List;
+import java.util.Optional;
+
+@AllArgsConstructor
+public class ContactService implements ContactUseCase {
+
+    private ContactRepositoryPort contactRepository;
+
+    @Override
+    public List<Contact> getContacts(long fromId, int limit) {
+        return contactRepository.getContacts(fromId, limit);
+    }
+
+    @Override
+    public Optional<Contact> getContactById(long id) {
+        return contactRepository.getContactById(id);
+    }
+
+    @Override
+    public Contact saveContact(Contact contact) {
+        return contactRepository.saveContact(contact).orElse(null);
+    }
+
+    @Override
+    public void deleteContactById(long id) {
+        contactRepository.deleteContactById(id);
+    }
+
+}
+
+
+==================================================
+FILE: ./backend/src/main/java/com/beastwall/backend/contact/v1/domain/model/Contact.java
+==================================================
+package com.beastwall.backend.contact.v1.domain.model;
+
+import lombok.Builder;
+import lombok.Getter;
+
+@Getter
+@Builder
+public class Contact {
+    private final Long id;
+    private final String firstname;
+    private final String lastname;
+    private final String phone;
+    private final String email;
+
+    public Contact(Long id, String firstname, String lastname, String phone, String email) {
+        if (firstname == null || firstname.isBlank()) {
+            throw new IllegalArgumentException("Firstname is required");
+        }
+        if (lastname == null || lastname.isBlank()) {
+            throw new IllegalArgumentException("Lastname is required");
+        }
+        this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.phone = phone;
+        this.email = email;
+    }
+}
+
+==================================================
+FILE: ./backend/src/main/java/com/beastwall/backend/contact/v1/infra/adapter/controller/ContactController.java
+==================================================
+package com.beastwall.backend.contact.v1.infra.adapter.controller;
+
+import com.beastwall.backend.contact.v1.application.port.in.ContactUseCase;
+import com.beastwall.backend.contact.v1.domain.model.Contact;
+import com.beastwall.backend.contact.v1.infra.adapter.controller.dto.ContactDTO;
+import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/contact")
+@AllArgsConstructor
+public class ContactController {
+
+    private final ContactUseCase contactUseCase;
+
+    @GetMapping("/many/{fromId}")
+    public ResponseEntity<List<ContactDTO>> getContacts(
+            @PathVariable long fromId,
+            @RequestParam(required = false, defaultValue = "20") int limit) {
+
+        List<ContactDTO> contacts = contactUseCase.getContacts(fromId, limit).stream()
+                .map(ContactDTO::fromDomain)
+                .toList();
+        return ResponseEntity.ok(contacts);
+    }
+
+    @GetMapping("/one/{id}")
+    public ResponseEntity<ContactDTO> getContactById(@PathVariable long id) {
+        return contactUseCase.getContactById(id)
+                .map(ContactDTO::fromDomain)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @PatchMapping
+    public ResponseEntity<ContactDTO> saveContact(@Valid @RequestBody ContactDTO contactDTO) {
+        Contact response = contactUseCase.saveContact(contactDTO.toDomain());
+        return ResponseEntity.ok(ContactDTO.fromDomain(response));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteContactById(@PathVariable long id) {
+        contactUseCase.deleteContactById(id);
+        return ResponseEntity.ok("Contact(" + id + ") Deleted Successfully");
+    }
+}
+
+==================================================
+FILE: ./backend/src/main/java/com/beastwall/backend/contact/v1/infra/adapter/controller/dto/ContactDTO.java
+==================================================
+package com.beastwall.backend.contact.v1.infra.adapter.controller.dto;
+
+import com.beastwall.backend.contact.v1.domain.model.Contact;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Builder
+public class ContactDTO {
+
+    private Long id;
+
+    @NotBlank(message = "firstname is required")
+    private String firstname;
+
+    @NotBlank(message = "lastname is required")
+    private String lastname;
+
+    @Pattern(regexp = "^\\+?[1-9]\\d{1,14}$", message = "Wrong phone format")
+    private String phone;
+
+    @Email(message = "not valid email address xxx@yyy.domain")
+    private String email;
+
+    public static ContactDTO fromDomain(Contact contact) {
+        return ContactDTO.builder()
+                .id(contact.getId())
+                .firstname(contact.getFirstname())
+                .lastname(contact.getLastname())
+                .phone(contact.getPhone())
+                .email(contact.getEmail())
+                .build();
+    }
+
+    public Contact toDomain() {
+        return Contact.builder()
+                .id(this.id)
+                .firstname(this.firstname)
+                .lastname(this.lastname)
+                .phone(this.phone)
+                .email(this.email)
+                .build();
+    }
+}
+
+==================================================
+FILE: ./backend/src/main/java/com/beastwall/backend/contact/v1/infra/config/ContactServiceConfiguration.java
+==================================================
+package com.beastwall.backend.contact.v1.infra.config;
+
+import com.beastwall.backend.contact.v1.application.port.in.ContactUseCase;
+import com.beastwall.backend.contact.v1.application.port.out.ContactRepositoryPort;
+import com.beastwall.backend.contact.v1.application.service.ContactService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+public class ContactServiceConfiguration {
+
+    @Bean
+    public ContactUseCase contactUseCase(ContactRepositoryPort contactRepositoryPort) {
+        return new ContactService(contactRepositoryPort);
+    }
+}
+
+
+==================================================
+FILE: ./backend/src/main/java/com/beastwall/backend/contact/v1/infra/persistence/entity/ContactEntityJpa.java
+==================================================
+package com.beastwall.backend.contact.v1.infra.persistence.entity;
+
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
+@Table(name = "contact")
+public class ContactEntityJpa {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String firstname;
+
+    @Column(nullable = false)
+    private String lastname;
+
+    private String phone;
+
+    private String email;
+}
+
+
+==================================================
+FILE: ./backend/src/main/java/com/beastwall/backend/contact/v1/infra/persistence/mapper/ContactMapper.java
+==================================================
+package com.beastwall.backend.contact.v1.infra.persistence.mapper;
+
+import com.beastwall.backend.contact.v1.domain.model.Contact;
+import com.beastwall.backend.contact.v1.infra.persistence.entity.ContactEntityJpa;
+import org.mapstruct.Mapper;
+
+@Mapper(componentModel = "spring")
+public interface ContactMapper {
+
+    Contact mapToDomainModel(ContactEntityJpa contact);
+    ContactEntityJpa mapToPersistenceModel(Contact contact);
+
+}
+
+
+==================================================
+FILE: ./backend/src/main/java/com/beastwall/backend/contact/v1/infra/persistence/repository/ContactJpaRepository.java
+==================================================
+package com.beastwall.backend.contact.v1.infra.persistence.repository;
+
+import com.beastwall.backend.contact.v1.infra.persistence.entity.ContactEntityJpa;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface ContactJpaRepository extends JpaRepository<ContactEntityJpa, Long> {
+
+    @Query(value = "SELECT * FROM contact c WHERE c.id >= :fromId LIMIT :limit", nativeQuery = true)
+    List<ContactEntityJpa> findContactsByIdLimitedResults(long fromId, long limit);
+}
+
+
+==================================================
+FILE: ./backend/src/main/java/com/beastwall/backend/contact/v1/infra/persistence/repository/ContactRepositoryJpaAdapter.java
+==================================================
+package com.beastwall.backend.contact.v1.infra.persistence.repository;
+
+import com.beastwall.backend.contact.v1.domain.model.Contact;
+import com.beastwall.backend.contact.v1.application.port.out.ContactRepositoryPort;
+import com.beastwall.backend.contact.v1.infra.persistence.entity.ContactEntityJpa;
+import com.beastwall.backend.contact.v1.infra.persistence.mapper.ContactMapper;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.Optional;
+
+@Component
+@AllArgsConstructor
+public class ContactRepositoryJpaAdapter implements ContactRepositoryPort {
+
+    private ContactJpaRepository contactRepository;
+
+    private ContactMapper contactMapper;
+
+    @Override
+    public List<Contact> getContacts(long fromId, int limit) {
+        return contactRepository
+                .findContactsByIdLimitedResults(fromId, limit)
+                .stream()
+                .map(contactMapper::mapToDomainModel)
+                .toList();
+    }
+
+    @Override
+    public Optional<Contact> getContactById(long id) {
+        return contactRepository
+                .findById(id)
+                .map(c -> contactMapper.mapToDomainModel(c));
+    }
+
+    @Override
+    public Optional<Contact> saveContact(Contact contact) {
+        ContactEntityJpa contactEntityJpa = contactRepository.save(contactMapper.mapToPersistenceModel(contact));
+        return Optional.of(contactMapper.mapToDomainModel(contactEntityJpa));
+    }
+
+    @Override
+    public void deleteContactById(long id) {
+        contactRepository.deleteById(id);
+    }
+}
+
+
+==================================================
+FILE: ./backend/src/test/java/com/beastwall/backend/BackendApplicationTests.java
+==================================================
+package com.beastwall.backend;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class BackendApplicationTests {
+
+    @Test
+    void contextLoads() {
+    }
+
+}
