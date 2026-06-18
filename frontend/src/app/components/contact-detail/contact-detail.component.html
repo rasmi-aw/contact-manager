@@ -1,0 +1,17 @@
+@if (contact()) {
+  <div class="detail-container">
+    <mat-card class="detail-card">
+      <mat-card-title>{{ contact()?.firstname }} {{ contact()?.lastname }}</mat-card-title>
+      <mat-card-content>
+        <p><strong>Email:</strong> {{ contact()?.email }}</p>
+        <p><strong>Phone:</strong> {{ contact()?.phone }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-button routerLink="/contacts">Back to List</button>
+        <button mat-raised-button color="accent" [routerLink]="['/contacts/edit', contact()?.id]">Edit</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+} @else {
+  <div style="padding: 20px;">Contact not found.</div>
+}
