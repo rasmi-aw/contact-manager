@@ -17,12 +17,7 @@ export class ContactService {
   getById(id: number): Observable<Contact> {
     return this.http.get<Contact>(`${this.apiUrl}/${id}`);
   }
-
-  create(contact: Contact): Observable<Contact> {
-    return this.update(contact);
-  }
-
-  update(contact: Contact): Observable<Contact> {
+  createOrUpdate(contact: Contact): Observable<Contact> {
     return this.http.put<Contact>(`${this.apiUrl}`, contact);
   }
 

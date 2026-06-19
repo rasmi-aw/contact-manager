@@ -42,7 +42,7 @@ export const ContactStore = signalStore(
     addContact: rxMethod<Contact>(
       pipe(
         switchMap((contact) =>
-          contactService.create(contact).pipe(
+          contactService.createOrUpdate(contact).pipe(
             tap((newContact) => {
               patchState(store, { contacts: [...store.contacts(), newContact] });
               snackBar.open('Contact created successfully!', 'Close', { duration: 3000 });
@@ -60,7 +60,7 @@ export const ContactStore = signalStore(
     updateContact: rxMethod<{ id: number; contact: Contact }>(
       pipe(
         switchMap(({ id, contact }) =>
-          contactService.update(contact).pipe(
+          contactService.createOrUpdate(contact).pipe(
             tap((updatedContact) => {
               patchState(store, {
                 contacts: store.contacts().map((c) => (c.id === id ? updatedContact : c)),
