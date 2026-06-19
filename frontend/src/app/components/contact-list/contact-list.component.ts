@@ -12,7 +12,6 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { Contact } from '../../models/contact.model';
 import { ContactStore } from '../../store/contact.store';
 import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
-import {ContactService} from '../../services/contact.service';
 
 @Component({
   selector: 'app-contact-list',
@@ -30,7 +29,6 @@ export class ContactListComponent implements OnInit {
   displayedColumns: string[] = ['firstname', 'lastname', 'email', 'phone', 'actions'];
   dataSource = new MatTableDataSource<Contact>([]);
 
-  // Using a setter ensures the sort property links up whenever the view instantiates it
   private matSort!: MatSort;
 
   @ViewChild(MatSort) set sort(sort: MatSort) {
@@ -38,10 +36,9 @@ export class ContactListComponent implements OnInit {
     this.dataSource.sort = this.matSort;
   }
 
-  constructor(private contactService: ContactService) {
+  constructor() {
     effect(() => {
       this.dataSource.data = this.store.contacts() as Contact[];
-      // Re-assign here to force MatTableDataSource to recalculate sorting boundaries on signal mutations
       if (this.matSort) {
         this.dataSource.sort = this.matSort;
       }
@@ -90,8 +87,6 @@ export class ContactListComponent implements OnInit {
     document.body.removeChild(link);
   }
 
-
-
   onFileSelected(event: Event): void {
     const element = event.currentTarget as HTMLInputElement;
     const fileList: FileList | null = element.files;
@@ -107,18 +102,15 @@ export class ContactListComponent implements OnInit {
         const lines = text.split('\n');
         const contacts: Contact[] = [];
 
-        // Start at index 1 to skip the header line if present ("First Name, Last Name...")
         for (let i = 1; i < lines.length; i++) {
           const line = lines[i].trim();
-          if (!line) continue; // Skip empty rows
+          if (!line) continue;
 
-          // Split by comma while stripping enclosing double quotes
           const columns = line.split(',').map(val => val.replace(/^"|"$/g, '').trim());
 
-          // Ensure we have enough columns before processing
           if (columns.length >= 4) {
             contacts.push({
-              id: null as any, // Explicitly sending null for backend database sequence generation
+              id: null as any,
               firstname: columns[0],
               lastname: columns[1],
               email: columns[2],
@@ -128,8 +120,8 @@ export class ContactListComponent implements OnInit {
         }
 
         if (contacts.length > 0) {
-          // Pass the structural JSON array directly to your service/store method
-          this.contactService.importCsvList(contacts);
+          // FIXED: Dispatching directly to the store rxMethod to subscribe to execution safely
+          this.store.importCsvList(contacts);
         }
       };
 

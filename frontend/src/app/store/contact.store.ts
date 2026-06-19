@@ -94,11 +94,11 @@ export const ContactStore = signalStore(
       )
     ),
 
-    importCsv: rxMethod<File>(
+    importCsvList: rxMethod<Contact[]>(
       pipe(
         tap(() => patchState(store, { loading: true })),
-        switchMap((file) =>
-          contactService.importCsv(file).pipe(
+        switchMap((contacts) =>
+          contactService.importCsv(contacts).pipe(
             tap((newContacts) => {
               patchState(store, { contacts: [...store.contacts(), ...newContacts], loading: false });
               snackBar.open('CSV Data Imported Successfully!', 'Close', { duration: 3000 });
