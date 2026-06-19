@@ -1,4 +1,4 @@
-package com.beastwall.backend.contact.v1.infra.persistence.entity;
+package com.beastwall.backend.contact.infra.persistence.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

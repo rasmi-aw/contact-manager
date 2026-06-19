@@ -1,4 +1,4 @@
-package com.beastwall.backend.contact.v1.infra.config;
+package com.beastwall.backend.contact.infra.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

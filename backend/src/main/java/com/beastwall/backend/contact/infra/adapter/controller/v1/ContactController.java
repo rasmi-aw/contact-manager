@@ -1,8 +1,9 @@
-package com.beastwall.backend.contact.v1.infra.adapter.controller.v1;
+package com.beastwall.backend.contact.infra.adapter.controller.v1;
 
-import com.beastwall.backend.contact.v1.application.port.in.ContactUseCase;
-import com.beastwall.backend.contact.v1.domain.model.entity.Contact;
-import com.beastwall.backend.contact.v1.infra.adapter.controller.v1.dto.ContactDTO;
+import com.beastwall.backend.contact.application.port.in.ContactUseCase;
+import com.beastwall.backend.contact.domain.model.entity.Contact;
+import com.beastwall.backend.contact.infra.adapter.controller.v1.dto.ContactDTO;
+import com.beastwall.backend.contact.infra.persistence.mapper.ContactMapper;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import java.util.Optional;
 public class ContactController {
 
     private final ContactUseCase contactUseCase;
+    private final ContactMapper contactMapper;
 
     @GetMapping("/many/{fromId}")
     public ResponseEntity<List<ContactDTO>> getContacts(
@@ -40,8 +42,17 @@ public class ContactController {
     @PutMapping
     public ResponseEntity<ContactDTO> saveContact(@Valid @RequestBody ContactDTO contactDTO) {
         Optional<Contact> response = contactUseCase.saveContact(contactDTO.toDomain());
-        System.out.println();
+        System.out.println(contactDTO.getId() + ":" + response.get().getId());
         return response.map(contact -> ResponseEntity.ok(ContactDTO.fromDomain(contact))).orElseGet(() -> ResponseEntity.badRequest().build());
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<?> saveAll(@Valid @RequestBody List<ContactDTO> contacts) {
+        List<Contact> response = contactUseCase.saveAll(contacts.stream().map(ContactDTO::toDomain).toList());
+        if (response == null || response.isEmpty())
+            return ResponseEntity.badRequest().body("Error in your one of the contacts");
+        else
+            return ResponseEntity.ok(response.stream().map(ContactDTO::fromDomain));
     }
 
     @DeleteMapping("/{id}")

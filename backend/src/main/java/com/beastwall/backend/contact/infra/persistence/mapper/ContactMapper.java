@@ -1,7 +1,7 @@
-package com.beastwall.backend.contact.v1.infra.persistence.mapper;
+package com.beastwall.backend.contact.infra.persistence.mapper;
 
-import com.beastwall.backend.contact.v1.domain.model.entity.Contact;
-import com.beastwall.backend.contact.v1.infra.persistence.entity.ContactEntityJpa;
+import com.beastwall.backend.contact.domain.model.entity.Contact;
+import com.beastwall.backend.contact.infra.persistence.entity.ContactEntityJpa;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

@@ -1,6 +1,6 @@
-package com.beastwall.backend.contact.v1.infra.persistence.repository;
+package com.beastwall.backend.contact.infra.persistence.repository;
 
-import com.beastwall.backend.contact.v1.infra.persistence.entity.ContactEntityJpa;
+import com.beastwall.backend.contact.infra.persistence.entity.ContactEntityJpa;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

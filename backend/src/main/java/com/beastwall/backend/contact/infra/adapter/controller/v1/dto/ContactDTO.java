@@ -1,9 +1,8 @@
-package com.beastwall.backend.contact.v1.infra.adapter.controller.v1.dto;
+package com.beastwall.backend.contact.infra.adapter.controller.v1.dto;
 
-import com.beastwall.backend.contact.v1.domain.model.entity.Contact;
+import com.beastwall.backend.contact.domain.model.entity.Contact;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ContactDTO {
 
-    private Long id;
+    private long id;
 
     @NotBlank(message = "firstname is required")
     private String firstname;

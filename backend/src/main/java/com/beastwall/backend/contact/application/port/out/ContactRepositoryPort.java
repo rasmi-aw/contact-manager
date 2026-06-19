@@ -1,6 +1,6 @@
-package com.beastwall.backend.contact.v1.application.port.out;
+package com.beastwall.backend.contact.application.port.out;
 
-import com.beastwall.backend.contact.v1.domain.model.entity.Contact;
+import com.beastwall.backend.contact.domain.model.entity.Contact;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +18,8 @@ public interface ContactRepositoryPort {
     Optional<Contact> getContactById(long id);
 
     Optional<Contact> saveContact(Contact contact);
+
+    List<Contact> saveAll(List<Contact> contact);
 
     void deleteContactById(long id);
 }

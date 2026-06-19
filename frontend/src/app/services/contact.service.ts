@@ -11,7 +11,7 @@ export class ContactService {
   private apiUrl = 'http://localhost:8080/api/v1/contacts';
 
   getAll(): Observable<Contact[]> {
-    return this.http.get<Contact[]>(this.apiUrl+"/many/0");
+    return this.http.get<Contact[]>(this.apiUrl+"/many/0?limit=1000");
   }
 
   getById(id: number): Observable<Contact> {
@@ -19,21 +19,19 @@ export class ContactService {
   }
 
   create(contact: Contact): Observable<Contact> {
-    return  this.update(contact.id? contact.id:-1,contact);
+    return  this.update(contact);
     // return this.http.post<Contact>(this.apiUrl, contact);
   }
 
-  update(id: number, contact: Contact): Observable<Contact> {
+  update(contact: Contact): Observable<Contact> {
     return this.http.put<Contact>(`${this.apiUrl}`, contact);
   }
 
-  delete(id: unknown): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  delete(id: unknown): Observable<string> {
+    return this.http.delete(`${this.apiUrl}/${id}`,{responseType:'text'});
   }
 
-  importCsv(file: unknown): Observable<Contact[]> {
-    // const formData = new FormData();
-    // formData.append('file', file);
-    return this.http.post<Contact[]>(`${this.apiUrl}/import`, null);
+  importCsv(contacts: Contact[]): Observable<Contact[]> {
+    return this.http.post<Contact[]>(`${this.apiUrl}/import`, contacts);
   }
 }

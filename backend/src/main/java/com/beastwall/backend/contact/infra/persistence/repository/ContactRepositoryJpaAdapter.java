@@ -1,9 +1,9 @@
-package com.beastwall.backend.contact.v1.infra.persistence.repository;
+package com.beastwall.backend.contact.infra.persistence.repository;
 
-import com.beastwall.backend.contact.v1.domain.model.entity.Contact;
-import com.beastwall.backend.contact.v1.application.port.out.ContactRepositoryPort;
-import com.beastwall.backend.contact.v1.infra.persistence.entity.ContactEntityJpa;
-import com.beastwall.backend.contact.v1.infra.persistence.mapper.ContactMapper;
+import com.beastwall.backend.contact.domain.model.entity.Contact;
+import com.beastwall.backend.contact.application.port.out.ContactRepositoryPort;
+import com.beastwall.backend.contact.infra.persistence.entity.ContactEntityJpa;
+import com.beastwall.backend.contact.infra.persistence.mapper.ContactMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -38,6 +38,12 @@ public class ContactRepositoryJpaAdapter implements ContactRepositoryPort {
     public Optional<Contact> saveContact(Contact contact) {
         ContactEntityJpa contactEntityJpa = contactRepository.save(contactMapper.mapToPersistenceModel(contact));
         return Optional.of(contactMapper.mapToDomainModel(contactEntityJpa));
+    }
+
+    @Override
+    public List<Contact> saveAll(List<Contact> contacts) {
+        List<ContactEntityJpa> persisted = contactRepository.saveAll(contacts.stream().map(contactMapper::mapToPersistenceModel).toList());
+        return persisted.stream().map(contactMapper::mapToDomainModel).toList();
     }
 
     @Override

@@ -60,7 +60,7 @@ export const ContactStore = signalStore(
     updateContact: rxMethod<{ id: number; contact: Contact }>(
       pipe(
         switchMap(({ id, contact }) =>
-          contactService.update(id, contact).pipe(
+          contactService.update(contact).pipe(
             tap((updatedContact) => {
               patchState(store, {
                 contacts: store.contacts().map((c) => (c.id === id ? updatedContact : c)),

@@ -1,8 +1,8 @@
-package com.beastwall.backend.contact.v1.application.service;
+package com.beastwall.backend.contact.application.service;
 
-import com.beastwall.backend.contact.v1.application.port.in.ContactUseCase;
-import com.beastwall.backend.contact.v1.application.port.out.ContactRepositoryPort;
-import com.beastwall.backend.contact.v1.domain.model.entity.Contact;
+import com.beastwall.backend.contact.application.port.in.ContactUseCase;
+import com.beastwall.backend.contact.application.port.out.ContactRepositoryPort;
+import com.beastwall.backend.contact.domain.model.entity.Contact;
 import lombok.AllArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +28,11 @@ public class ContactService implements ContactUseCase {
     @Transactional
     public Optional<Contact> saveContact(Contact contact) {
         return contactRepository.saveContact(contact);
+    }
+
+    @Override
+    public List<Contact> saveAll(List<Contact> contacts) {
+        return contactRepository.saveAll(contacts);
     }
 
     @Override

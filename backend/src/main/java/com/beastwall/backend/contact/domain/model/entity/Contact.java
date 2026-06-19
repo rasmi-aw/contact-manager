@@ -1,4 +1,4 @@
-package com.beastwall.backend.contact.v1.domain.model.entity;
+package com.beastwall.backend.contact.domain.model.entity;
 
 import lombok.Builder;
 import lombok.Getter;

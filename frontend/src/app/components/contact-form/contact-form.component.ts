@@ -1,14 +1,14 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatCardModule } from '@angular/material/card';
+import {Component, OnInit, inject} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {ActivatedRoute, RouterModule} from '@angular/router';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {MatInputModule} from '@angular/material/input';
+import {MatButtonModule} from '@angular/material/button';
+import {MatCardModule} from '@angular/material/card';
 
-import { Contact } from '../../models/contact.model';
-import { ContactStore } from '../../store/contact.store';
+import {Contact} from '../../models/contact.model';
+import {ContactStore} from '../../store/contact.store';
 
 @Component({
   selector: 'app-contact-form',
@@ -47,11 +47,12 @@ export class ContactFormComponent implements OnInit {
 
   onSubmit(): void {
     if (this.contactForm.invalid) return;
-
+    const formValue = this.contactForm.value;
+    formValue['id'] = this.contactId;
     if (this.isEditMode && this.contactId) {
-      this.store.updateContact({ id: this.contactId, contact: this.contactForm.value });
+      this.store.updateContact({id: this.contactId, contact: formValue});
     } else {
-      this.store.addContact(this.contactForm.value);
+      this.store.addContact(formValue);
     }
   }
 }

@@ -1,8 +1,8 @@
-package com.beastwall.backend.contact.v1.infra.config;
+package com.beastwall.backend.contact.infra.config;
 
-import com.beastwall.backend.contact.v1.application.port.in.ContactUseCase;
-import com.beastwall.backend.contact.v1.application.port.out.ContactRepositoryPort;
-import com.beastwall.backend.contact.v1.application.service.ContactService;
+import com.beastwall.backend.contact.application.port.in.ContactUseCase;
+import com.beastwall.backend.contact.application.port.out.ContactRepositoryPort;
+import com.beastwall.backend.contact.application.service.ContactService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
