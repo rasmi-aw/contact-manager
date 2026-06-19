@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class ContactDTO {
 
-    private long id;
+    private Long id;
 
     @NotBlank(message = "firstname is required")
     private String firstname;

@@ -39,10 +39,12 @@ public class ContactController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    /**
+     * Add or Update, i could add PostMapping as well, but i don't mind since it's a small Api
+     */
     @PutMapping
     public ResponseEntity<ContactDTO> saveContact(@Valid @RequestBody ContactDTO contactDTO) {
         Optional<Contact> response = contactUseCase.saveContact(contactDTO.toDomain());
-        System.out.println(contactDTO.getId() + ":" + response.get().getId());
         return response.map(contact -> ResponseEntity.ok(ContactDTO.fromDomain(contact))).orElseGet(() -> ResponseEntity.badRequest().build());
     }
 
